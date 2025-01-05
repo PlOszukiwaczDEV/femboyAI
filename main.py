@@ -8,7 +8,7 @@ from colorama import Fore, init
 
 # Initialize environment and colorama
 load_dotenv()
-init(autoreset=True)
+init()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -81,15 +81,40 @@ def import_chat_history(filename):
     except Exception as e:
         logging.error(f"Failed to import chat history: {e}")
 
+def clear_chat_history():
+    global messages
+    messages = [messages[0]]
+    logging.info("Chat history cleared.")
+
+def save_chat_on_exit():
+    export_chat_history("chat_history.json")
+    logging.info("Chat history saved on exit.")
+
+def list_commands():
+    commands = """
+    Available commands:
+    /export <filename> - Export chat history to a file
+    /import <filename> - Import chat history from a file
+    /clear - Clear the chat history
+    /stop - Stop the chat session
+    /help - List available commands
+    """
+    print(commands)
+
 def handle_exit(signum, frame):
+    save_chat_on_exit()
     logging.info("Exiting the chat session.")
     exit(0)
 
 def main():
     signal.signal(signal.SIGINT, handle_exit)
     
+    if os.path.exists("chat_history.json"):
+        import_chat_history("chat_history.json")
+        print(f"{Fore.YELLOW}Loaded chat history from chat_history.json, you can reset it using /clear{Fore.RESET}")
+
     while True:
-        user_message = input(f"{Fore.GREEN}You: ")
+        user_message = input(f"{Fore.GREEN}You: {Fore.RESET}")
 
         if user_message.startswith("/export"):
             try:
@@ -107,9 +132,18 @@ def main():
                 logging.warning("Please provide a filename to import chat history from")
             continue
 
+        if user_message == "/clear":
+            clear_chat_history()
+            continue
+
         if user_message == "/stop":
-            logging.info("Stopping the chat session.")
+            save_chat_on_exit()
+            logging.info("Exiting the chat session.")
             break
+
+        if user_message == "/help":
+            list_commands()
+            continue
 
         messages.append({
             "role": "user",
@@ -122,7 +156,7 @@ def main():
                 model="llama-3.3-70b-versatile",
             )
             response_message = chat_completion.choices[0].message.content
-            print(f"{Fore.BLUE}AI: {response_message}")
+            print(f"{Fore.BLUE}AI: {response_message}{Fore.RESET}")
 
             messages.append({
                 "role": "assistant",
