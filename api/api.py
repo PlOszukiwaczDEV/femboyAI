@@ -23,7 +23,7 @@ if not api_key:
     exit(1)
 
 flask_port = int(os.getenv("FLASK_PORT", 5000))
-flask_debug = int(os.getenv("FLASK_DEBUG", False))
+flask_debug = bool(os.getenv("FLASK_DEBUG", False))
 
 # Initialize Groq client
 client = Groq(api_key=api_key)
