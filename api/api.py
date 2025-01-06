@@ -23,6 +23,7 @@ if not api_key:
     exit(1)
 
 flask_port = int(os.getenv("FLASK_PORT", 5000))
+flask_debug = int(os.getenv("FLASK_DEBUG", False))
 
 # Initialize Groq client
 client = Groq(api_key=api_key)
@@ -96,4 +97,4 @@ def chat():
         return jsonify({"error": "Failed to get response from AI"}), 500
 
 if __name__ == "__main__":    
-    app.run(host='0.0.0.0', port=flask_port, debug=True)
+    app.run(host='0.0.0.0', port=flask_port, debug=flask_debug)
