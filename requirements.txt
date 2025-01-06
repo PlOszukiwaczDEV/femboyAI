@@ -2,3 +2,4 @@ groq
 python-dotenv
 colorama
 flask
+flask_cors

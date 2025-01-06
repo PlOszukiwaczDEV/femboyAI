@@ -3,6 +3,7 @@ import json
 import logging
 import signal
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from groq import Groq
 from dotenv import load_dotenv
 from colorama import Fore, init
@@ -69,6 +70,7 @@ messages = [
 ]
 
 app = Flask(__name__)
+CORS(app, resources={r"/chat": {"origins": "*"}})
 
 @app.route('/', methods=['GET'])
 def index():

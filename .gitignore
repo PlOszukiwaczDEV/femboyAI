@@ -1,3 +1,4 @@
+templates
 api_test.py
 .env
 *.json
