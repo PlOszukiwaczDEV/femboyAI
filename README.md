@@ -8,6 +8,7 @@ FemboyAI is a friendly and professional AI assistant that speaks in UwU style wh
 - Helpful and supportive personality
 - Export and import chat history
 - Handles `Ctrl+C` to gracefully exit the program
+- Web-based UI with dark and light modes
 
 ## Requirements
 
@@ -15,7 +16,8 @@ FemboyAI is a friendly and professional AI assistant that speaks in UwU style wh
 - `groq` library
 - `python-dotenv` library
 - `colorama` library
-- `flask` library (Required for the api)
+- `flask` library (Required for the API)
+- `flask-cors` library (Required for CORS handling)
 
 ## Installation
 
@@ -27,7 +29,7 @@ FemboyAI is a friendly and professional AI assistant that speaks in UwU style wh
 
 2. Install the required libraries:
     ```sh
-    pip install groq python-dotenv colorama flask
+    pip install groq python-dotenv colorama flask flask-cors
     ```
 
 3. Create a `.env` file in the project directory and add your Groq API key:
@@ -62,7 +64,7 @@ FemboyAI is a friendly and professional AI assistant that speaks in UwU style wh
 
 ##### GET /
 
-Returns a welcome message.
+Returns the HTML UI for the chatbot.
 
 **Request:**
 ```sh
@@ -70,11 +72,7 @@ GET /
 ```
 
 **Response:**
-```json
-{
-    "message": "You have seem to requested the femboyAI api using a GET request. Send chat requests using a POST to /chat."
-}
-```
+Returns the HTML page for the chatbot UI.
 
 ##### POST /chat
 

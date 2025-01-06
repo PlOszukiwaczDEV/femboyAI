@@ -2,14 +2,13 @@ import os
 import json
 import logging
 import signal
-from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
+from flask import Flask, request, jsonify
 from groq import Groq
 from dotenv import load_dotenv
 from colorama import Fore, init
 
 # Initialize environment and colorama
-load_dotenv(dotenv_path="../.env")
+load_dotenv()
 init()
 
 # Configure logging
@@ -22,9 +21,6 @@ api_key = os.getenv("GROQ_API_KEY")
 if not api_key:
     logging.error("API key not found in environment variables.")
     exit(1)
-
-flask_port = int(os.getenv("FLASK_PORT", 5000))
-flask_debug = bool(os.getenv("FLASK_DEBUG", False))
 
 # Initialize Groq client
 client = Groq(api_key=api_key)
@@ -69,12 +65,11 @@ messages = [
     },
 ]
 
-app = Flask(__name__, template_folder='templates')
-CORS(app, resources={r"/chat": {"origins": "*"}})
+app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
+    return jsonify({"message": "You have seem to requested the femboyAI api using a GET request. Send chat requests using a POST to /chat."})
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -99,4 +94,4 @@ def chat():
         return jsonify({"error": "Failed to get response from AI"}), 500
 
 if __name__ == "__main__":    
-    app.run(host='0.0.0.0', port=flask_port, debug=flask_debug)
+    app.run(host='0.0.0.0', port=5000, debug=True)

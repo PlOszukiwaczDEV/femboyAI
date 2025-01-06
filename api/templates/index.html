@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FemboyAI</title>
+    <style>
+        :root {
+            --bg-color: #eff1f5;
+            --text-color: #4c4f69;
+            --input-bg-color: #e6e9ef;
+            --input-border-color: #dce0e8;
+            --button-bg-color: #7287fd;
+            --button-hover-bg-color: #6269c9;
+            --user-message-bg-color: #7287fd;
+            --user-message-text-color: #fff;
+            --ai-message-bg-color: #dce0e8;
+            --ai-message-text-color: #4c4f69;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1e1e2e;
+            --text-color: #cdd6f4;
+            --input-bg-color: #313244;
+            --input-border-color: #45475a;
+            --button-bg-color: #89b4fa;
+            --button-hover-bg-color: #7391d5;
+            --user-message-bg-color: #89b4fa;
+            --user-message-text-color: #1e1e2e;
+            --ai-message-bg-color: #45475a;
+            --ai-message-text-color: #cdd6f4;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #chat-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid var(--input-border-color);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: var(--input-bg-color);
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            max-width: 80%;
+        }
+        .message.user {
+            align-self: flex-end;
+            background-color: var(--user-message-bg-color);
+            color: var(--user-message-text-color);
+        }
+        .message.ai {
+            align-self: flex-start;
+            background-color: var(--ai-message-bg-color);
+            color: var(--ai-message-text-color);
+        }
+        #input-container {
+            display: flex;
+        }
+        #input-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--input-border-color);
+            border-radius: 4px;
+            margin-right: 10px;
+            background-color: var(--input-bg-color);
+            color: var(--text-color);
+        }
+        #input-container button {
+            padding: 10px 20px;
+            border: none;
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #input-container button:hover {
+            background-color: var(--button-hover-bg-color);
+        }
+        #theme-toggle {
+            margin-bottom: 10px;
+            cursor: pointer;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <h1>FemboyAI</h1>
+        <div id="theme-toggle" onclick="toggleTheme()">Toggle Theme</div>
+        <div id="messages"></div>
+        <div id="input-container">
+            <input type="text" id="user-input" placeholder="Type your message here..." onkeydown="handleKeyDown(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            addMessage('user', message);
+            userInput.value = '';
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    addMessage('ai', data.response);
+                } else {
+                    addMessage('ai', 'Error: ' + data.error);
+                }
+            } catch (error) {
+                addMessage('ai', 'Error: ' + error.message);
+            }
+        }
+
+        function addMessage(role, content) {
+            const messages = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + role;
+            messageDiv.textContent = content;
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+    </script>
+</body>
+</html>
