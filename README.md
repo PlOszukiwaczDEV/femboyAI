@@ -15,6 +15,7 @@ FemboyAI is a friendly and professional AI assistant that speaks in UwU style wh
 - `groq` library
 - `python-dotenv` library
 - `colorama` library
+- `flask` library (Required for the api)
 
 ## Installation
 
@@ -26,7 +27,7 @@ FemboyAI is a friendly and professional AI assistant that speaks in UwU style wh
 
 2. Install the required libraries:
     ```sh
-    pip install groq python-dotenv colorama
+    pip install groq python-dotenv colorama flask
     ```
 
 3. Create a `.env` file in the project directory and add your Groq API key:
@@ -35,6 +36,8 @@ FemboyAI is a friendly and professional AI assistant that speaks in UwU style wh
     ```
 
 ## Usage
+
+### Chatbot
 
 1. Run the chatbot:
     ```sh
@@ -46,15 +49,52 @@ FemboyAI is a friendly and professional AI assistant that speaks in UwU style wh
     - `/import <filename>`: Import chat history from a file
     - `/stop`: Stop the chat session
 
-## Example
+### Flask API
 
+1. Run the Flask API:
+    ```sh
+    python api.py
+    ```
+
+2. Interact with the API using the following endpoints:
+
+#### Endpoints
+
+##### GET /
+
+Returns a welcome message.
+
+**Request:**
 ```sh
-You: Hello!
-AI: Hewwo! How can I hewp you today, uwu?
-You: /export chat_history.json
-Chat history exported to chat_history.json
-You: /stop
-Stopping the chat session.
+GET /
+```
+
+**Response:**
+```json
+{
+    "message": "You have seem to requested the femboyAI api using a GET request. Send chat requests using a POST to /chat."
+}
+```
+
+##### POST /chat
+
+Send a message to the AI and receive a response.
+
+**Request:**
+```sh
+POST /chat
+Content-Type: application/json
+
+{
+    "message": "Hello!"
+}
+```
+
+**Response:**
+```json
+{
+    "response": "Hewwo! How can I hewp you today, uwu?"
+}
 ```
 
 ## License
